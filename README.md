@@ -1,3 +1,6 @@
+[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url]
+[![Dependency Status][daviddm-image]][daviddm-url] [![devDependency Status][daviddm-dev-image]][daviddm-dev-url]
+
 # xsh
 
 Some random NodeJS helper functions for shell execution
@@ -7,6 +10,8 @@ Some random NodeJS helper functions for shell execution
 ```bash
 npm install xsh --save-dev
 ```
+
+## Usage
 
 ```js
 const xsh = require("xsh");
@@ -96,3 +101,19 @@ xsh.$.cd("/tmp");
 ```
 
 [shelljs]: https://github.com/shelljs/shelljs
+
+[travis-image]: https://travis-ci.org/jchip/xsh.svg?branch=master
+
+[travis-url]: https://travis-ci.org/jchip/xsh
+
+[npm-image]: https://badge.fury.io/js/xsh.svg
+
+[npm-url]: https://npmjs.org/package/xsh
+
+[daviddm-image]: https://david-dm.org/jchip/xsh/status.svg
+
+[daviddm-url]: https://david-dm.org/jchip/xsh
+
+[daviddm-dev-image]: https://david-dm.org/jchip/xsh/dev-status.svg
+
+[daviddm-dev-url]: https://david-dm.org/jchip/xsh?type=dev
