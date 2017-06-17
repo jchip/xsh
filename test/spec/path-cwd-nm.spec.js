@@ -39,4 +39,13 @@ describe("path-cwd-nmdir", function() {
     expect(xsh.pathCwdNm.replace(`${x} ${x}`, false, "g")).to.equal(`${e1} ${e1}`);
     expect(xsh.pathCwdNm.replace(`${x} ${x}`, "$/~", "g")).to.equal(`${e2} ${e2}`);
   });
+
+  it("replace all CWD and /node_modules/ from path with g flag", function() {
+    const x = Path.resolve("test", "node_modules", "foo", "node_modules", "bar");
+    const e1 = Path.normalize("CWD/test/~/foo/~/bar");
+    const e2 = Path.normalize("CWD/test/~/foo/~/bar");
+
+    expect(xsh.pathCwdNm.replace(`${x} ${x}`, false, "g")).to.equal(`${e1} ${e1}`);
+    expect(xsh.pathCwdNm.replace(`${x} ${x}`, "$/~", "g")).to.equal(`${e2} ${e2}`);
+  });
 });
