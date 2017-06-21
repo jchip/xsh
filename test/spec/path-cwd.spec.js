@@ -35,4 +35,8 @@ describe("path-cwd", function() {
     expect(xsh.pathCwd.replace(`${x} ${x}`, false, "g")).to.equal(`${e1} ${e1}`);
     expect(xsh.pathCwd.replace(`${x} ${x}`, "$", "g")).to.equal(`${e2} ${e2}`);
   });
+
+  it("remove should strip leading /", function() {
+    expect(xsh.pathCwd.remove(Path.resolve("foo"), "", true)).to.equal("foo");
+  });
 });
