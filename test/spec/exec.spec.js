@@ -4,11 +4,13 @@ const chai = require("chai");
 const expect = chai.expect;
 
 describe("exec", function() {
+  const expectUnknownCmdSig = process.platform === "win32" ? "is not recognized" : "not found";
+
   it("should failed for unknown command", function(done) {
     xsh.exec("unknown_command", function(err, output) {
       expect(err).to.be.ok;
       expect(err.output.stderr).equals(output.stderr);
-      expect(output.stderr).includes("not found");
+      expect(output.stderr).includes(expectUnknownCmdSig);
       done();
     });
   });
@@ -20,14 +22,14 @@ describe("exec", function() {
         throw new Error("expected failure");
       })
       .catch(err => {
-        expect(err.output.stderr).includes("not found");
+        expect(err.output.stderr).includes(expectUnknownCmdSig);
       });
   });
 
   it("should execute command", function(done) {
     xsh.exec("echo hello, world", function(err, output) {
       expect(err).to.be.not.ok;
-      expect(output.stdout).to.equal("hello, world\n");
+      expect(output.stdout.trim()).to.equal("hello, world");
       done();
     });
   });
@@ -35,14 +37,14 @@ describe("exec", function() {
   it("should execute command with output silent", function(done) {
     xsh.exec(false, "echo hello, world", function(err, output) {
       expect(err).to.be.not.ok;
-      expect(output.stdout).to.equal("hello, world\n");
+      expect(output.stdout.trim()).to.equal("hello, world");
       done();
     });
   });
 
   it("should execute command @Promise", function() {
     return xsh.exec("echo hello, world").then(output => {
-      expect(output.stdout).to.equal("hello, world\n");
+      expect(output.stdout.trim()).to.equal("hello, world");
     });
   });
 
@@ -57,7 +59,7 @@ describe("exec", function() {
   it("should exec command split in array", function() {
     xsh.exec(["echo", "hello,", "world"], function(err, output) {
       expect(err).to.be.not.ok;
-      expect(output.stdout).to.equal("hello, world\n");
+      expect(output.stdout.trim()).to.equal("hello, world");
       done();
     });
   });
@@ -65,7 +67,7 @@ describe("exec", function() {
   it("should exec command split in multiple arrays", function() {
     xsh.exec(["echo", "hello, world"], ["my", "name", "is", "test"], function(err, output) {
       expect(err).to.be.not.ok;
-      expect(output.stdout).to.equal("hello, world my name is test\n");
+      expect(output.stdout.trim()).to.equal("hello, world my name is test");
       done();
     });
   });

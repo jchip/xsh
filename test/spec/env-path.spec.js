@@ -2,6 +2,7 @@
 const xsh = require("../..");
 const chai = require("chai");
 const expect = chai.expect;
+const Path = require("path");
 
 describe("envPath", function() {
   let save;
@@ -41,12 +42,17 @@ describe("envPath", function() {
   });
 
   it("add should add path end if it's not exist", function() {
-    process.env.PATH = "/test1:/test2";
-    xsh.envPath.add("/test1");
-    expect(process.env.PATH).to.equal("/test1:/test2");
-    xsh.envPath.add("/test2");
-    expect(process.env.PATH).to.equal("/test1:/test2");
-    xsh.envPath.add("/test3");
-    expect(process.env.PATH).to.equal("/test1:/test2:/test3");
+    const p1 = Path.normalize("/test1");
+    const p2 = Path.normalize("/test2");
+    const p3 = Path.normalize("/test3");
+    const r1 = [p1, p2].join(Path.delimiter);
+    const r2 = [p1, p2, p3].join(Path.delimiter);
+    process.env.PATH = r1;
+    xsh.envPath.add(p1);
+    expect(process.env.PATH).to.equal(r1);
+    xsh.envPath.add(p2);
+    expect(process.env.PATH).to.equal(r1);
+    xsh.envPath.add(p3);
+    expect(process.env.PATH).to.equal(r2);
   });
 });

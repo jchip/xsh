@@ -26,9 +26,9 @@ describe("path-cwd-nmdir", function() {
     expect(xsh.pathCwdNm.replace(Path.resolve("node_modules", "foo", "bar"))).to.equal(
       Path.normalize("CWD/~/foo/bar")
     );
-    expect(xsh.pathCwdNm.replace(Path.resolve("node_modules", "foo", "bar"), "$/~")).to.equal(
-      Path.normalize("$/~/foo/bar")
-    );
+    expect(
+      xsh.pathCwdNm.replace(Path.resolve("node_modules", "foo", "bar"), Path.join("$", "~"))
+    ).to.equal(Path.normalize("$/~/foo/bar"));
   });
 
   it("replace all cwd/node_modules from path with g flag", function() {
@@ -37,7 +37,7 @@ describe("path-cwd-nmdir", function() {
     const e2 = Path.normalize("$/~/foo/bar");
 
     expect(xsh.pathCwdNm.replace(`${x} ${x}`, false, "g")).to.equal(`${e1} ${e1}`);
-    expect(xsh.pathCwdNm.replace(`${x} ${x}`, "$/~", "g")).to.equal(`${e2} ${e2}`);
+    expect(xsh.pathCwdNm.replace(`${x} ${x}`, Path.normalize("$/~"), "g")).to.equal(`${e2} ${e2}`);
   });
 
   it("replace all CWD and /node_modules/ from path with g flag", function() {
@@ -46,6 +46,6 @@ describe("path-cwd-nmdir", function() {
     const e2 = Path.normalize("CWD/test/~/foo/~/bar");
 
     expect(xsh.pathCwdNm.replace(`${x} ${x}`, false, "g")).to.equal(`${e1} ${e1}`);
-    expect(xsh.pathCwdNm.replace(`${x} ${x}`, "$/~", "g")).to.equal(`${e2} ${e2}`);
+    expect(xsh.pathCwdNm.replace(`${x} ${x}`, Path.normalize("$/~"), "g")).to.equal(`${e2} ${e2}`);
   });
 });
