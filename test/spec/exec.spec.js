@@ -18,7 +18,7 @@ describe("exec", function() {
   it("should failed for unknown command @Promise", function() {
     return xsh
       .exec("unknown_command")
-      .then(() => {
+      .promise.then(() => {
         throw new Error("expected failure");
       })
       .catch(err => {
@@ -43,7 +43,7 @@ describe("exec", function() {
   });
 
   it("should execute command @Promise", function() {
-    return xsh.exec("echo hello, world").then(output => {
+    return xsh.exec("echo hello, world").promise.then(output => {
       expect(output.stdout.trim()).to.equal("hello, world");
     });
   });
@@ -110,5 +110,27 @@ describe("exec", function() {
 
   it("should failed if a command fragment is not array or string", function() {
     expect(() => xsh.exec("test", ["1", "2"], true)).to.throw(Error);
+  });
+
+  it("should emit stdout data before complete @callback", done => {
+    let data = [];
+    const onData = x => data.push(x);
+    const r = xsh.exec(true, "echo 1 && sleep 1 && echo 2", (err, output) => {
+      expect(data).to.deep.equal(["1\n", "2\n"]);
+      done();
+    });
+    r.stdout.on("data", onData);
+  });
+
+  it("should emit stdout data before complete @Promise", () => {
+    let data = [];
+    const onData = x => data.push(x);
+    const r = xsh.exec(true, "echo 1 && sleep 1 && echo 2");
+
+    r.stdout.on("data", onData);
+
+    return r.promise.then(output => {
+      expect(data).to.deep.equal(["1\n", "2\n"]);
+    });
   });
 });
