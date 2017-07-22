@@ -47,49 +47,75 @@ Both return the string `"echo hello"`.
 ### [exec](#exec)
 
 ```js
-xsh.exec( [silent: true|false], shellCommand, [callback] );
+xsh.exec( [options], shellCommand, [callback] );
 ```
 
-Use [shelljs] `exec` to execute `shellCommand`.
+Use [shelljs `exec`] to execute `shellCommand` in `async` mode.
 
-If callback is provided, it will be called as follows:
+#### Arguments
+
+-   `options` - optional `options`
+
+    -   If it's either `true` or `false`, it turns on/off output to console.
+    -   It can also be an object that's passed to `exec`.
+        -   For example, it can be `{silent: true}`
+
+-   `shellCommand` - can be combination of multiple strings and arrays.  Array is joined with `" "` into strings.  All final strings are joined with `" "`.
+
+-   `callback` - optional, if provided, it will be called as follows:
 
 `callback( code !== 0 ? new Error("...") : undefined, { stdout, stderr } )`
 
 `error.output` is set to `{ stdout, stderr}`.
 `error.code` is set to `code`.
 
-If no callback is provided, it will return a `Promise` that rejects with the error or resolve with `{ stdout, stderr }`.
+#### Returns
 
-#### Arguments
+-   With callback - The `child` object returned by `exec`
 
--   `silent` - If the first argument is either `true` or `false`, it turns on/off output to console.
+-   Without callback - An object with following:
 
--   `shellCommand` - can be combination of multiple strings and arrays.  Array is joined with `" "` into strings.  All final strings are joined with `" "`.
+```js
+{
+  promise, child, stdout, stderr
+}
+```
+
+Where:
+
+-   `promise` - rejects with the error or resolves with `{ stdout, stderr }`
+-   `child` - the child from `exec`
+-   `stdout` and `stderr` - alias to `child.stdout` and `child.stderr`
 
 ### [envPath.addToFront](#envpathaddtofront)
 
 ```js
-xsh.envPath.addToFront(path);
+xsh.envPath.addToFront(path, [env]);
 ```
 
 Add `path` to the front of `process.env.PATH`.  If it already exists, then it is moved to the front.
 
+If you don't want to operate on `process.env` you can pass in a second argument that's either an object or a string that's the path to change.
+
 ### [envPath.addToEnd](#envpathaddtoend)
 
 ```js
-xsh.envPath.addToEnd(path);
+xsh.envPath.addToEnd(path, [env]);
 ```
 
 Add `path` to the end of `process.env.PATH`.  If it already exists, then it is moved to the end.
 
+If you don't want to operate on `process.env` you can pass in a second argument that's either an object or a string that's the path to change.
+
 ### [envPath.add](#envpathadd)
 
 ```js
-xsh.envPath.add(path);
+xsh.envPath.add(path, [env]);
 ```
 
 If `path` doesn't exist in `process.env.PATH` then it's added to the end.
+
+If you don't want to operate on `process.env` you can pass in a second argument that's either an object or a string that's the path to change.
 
 ### [`$`](#)
 
@@ -99,6 +125,8 @@ An instance of [shelljs].
 const xsh = require("xsh");
 xsh.$.cd("/tmp");
 ```
+
+[shelljs `exec`]: http://documentup.com/shelljs/shelljs#execcommand--options--callback
 
 [shelljs]: https://github.com/shelljs/shelljs
 
