@@ -27,6 +27,19 @@ describe("envPath", function() {
     expect(process.env.PATH.indexOf("/test1")).to.equal(0);
   });
 
+  it("addToFront should add path to front of a path", function() {
+    let PATH;
+    PATH = xsh.envPath.addToFront("/test1", PATH);
+    expect(PATH.indexOf("/test1")).to.equal(0);
+    PATH = xsh.envPath.addToFront("/test1", {});
+    PATH = xsh.envPath.addToFront("/test1", PATH);
+    expect(PATH).to.equal("/test1");
+    PATH = xsh.envPath.addToFront("/test2", PATH);
+    expect(PATH.indexOf("/test2")).to.equal(0);
+    PATH = xsh.envPath.addToFront("/test1", PATH);
+    expect(PATH.indexOf("/test1")).to.equal(0);
+  });
+
   it("addToEnd should add path to end", function() {
     process.env.PATH = "";
     xsh.envPath.addToEnd("/test1");
