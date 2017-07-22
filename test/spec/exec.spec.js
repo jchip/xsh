@@ -56,7 +56,7 @@ describe("exec", function() {
     expect(() => xsh.exec(() => undefined)).to.throw(Error);
   });
 
-  it("should exec command split in array", function() {
+  it("should exec command split in array", function(done) {
     xsh.exec(["echo", "hello,", "world"], function(err, output) {
       expect(err).to.be.not.ok;
       expect(output.stdout.trim()).to.equal("hello, world");
@@ -64,7 +64,7 @@ describe("exec", function() {
     });
   });
 
-  it("should exec command split in multiple arrays", function() {
+  it("should exec command split in multiple arrays", function(done) {
     xsh.exec(["echo", "hello, world"], ["my", "name", "is", "test"], function(err, output) {
       expect(err).to.be.not.ok;
       expect(output.stdout.trim()).to.equal("hello, world my name is test");
@@ -72,7 +72,7 @@ describe("exec", function() {
     });
   });
 
-  it("should exec command split in arrays and strings", function() {
+  it("should exec command split in arrays and strings", function(done) {
     xsh.exec(
       ["echo", "hello, world"],
       ["my", "name"],
@@ -84,6 +84,25 @@ describe("exec", function() {
       function(err, output) {
         expect(err).to.be.not.ok;
         expect(output.stdout).to.equal("hello, world my name is test foo bar more text\n");
+        done();
+      }
+    );
+  });
+
+  it("should exec with user env", function(done) {
+    process.env.FOO = "bar";
+    xsh.exec(
+      {
+        env: {
+          hello: "test",
+          PATH: process.env.PATH
+        }
+      },
+      "echo FOO=$FOO hello=$hello",
+      function(err, output) {
+        expect(err).to.be.not.ok;
+        expect(output.stdout).includes("FOO= hello=test");
+        delete process.env.FOO;
         done();
       }
     );
