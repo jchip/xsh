@@ -2,6 +2,7 @@
 const xsh = require("../..");
 const chai = require("chai");
 const expect = chai.expect;
+const Promise = require("bluebird");
 
 describe("exec", function() {
   const expectUnknownCmdSig = process.platform === "win32" ? "is not recognized" : "not found";
@@ -145,5 +146,17 @@ describe("exec", function() {
         expect(error).to.exist;
         expect(error.output.stderr).includes("not found");
       });
+  });
+
+  it("should have its returned value be treated as a promise by bluebird", () => {
+    return Promise.resolve("hello").then(() => xsh.exec("echo blah")).then(r => {
+      expect(r).to.deep.equal({ stdout: "blah\n", stderr: "" });
+    });
+  });
+
+  it("should have its returned value be treated as a promise by global.Promise", () => {
+    return global.Promise.resolve("hello").then(() => xsh.exec("echo blah")).then(r => {
+      expect(r).to.deep.equal({ stdout: "blah\n", stderr: "" });
+    });
   });
 });
