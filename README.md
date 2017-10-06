@@ -52,12 +52,32 @@ xsh.exec( [options], shellCommand, [callback] );
 
 Use [shelljs `exec`] to execute `shellCommand` in `async` mode.
 
+Example:
+
+-   With Promise:
+
+```js
+xsh.exec("echo hello").promise.then(r => { console.log("result", r.stdout); });
+```
+
+-   With `options`:
+
+```js
+xsh.exec({cwd: "/tmp"}, "pwd").promise.then(r => { console.log("result", r.stdout)})
+```
+
+-   With callback:
+
+```js
+xsh.exec("echo hello", (r) => {console.log("result", r.stdout)})
+```
+
 #### Arguments
 
 -   `options` - optional `options`
 
     -   If it's either `true` or `false`, it turns on/off output to console.
-    -   It can also be an object that's passed to `exec`.
+    -   It can also be an object that's passed to [NodeJS exec](https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback).
         -   For example, it can be `{silent: true}`
 
 -   `shellCommand` - can be combination of multiple strings and arrays.  Array is joined with `" "` into strings.  All final strings are joined with `" "`.
