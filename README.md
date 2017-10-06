@@ -57,13 +57,13 @@ Example:
 -   With Promise:
 
 ```js
-xsh.exec("echo hello").promise.then(r => { console.log("result", r.stdout); });
+xsh.exec("echo hello").then(r => { console.log("result", r.stdout); });
 ```
 
 -   With `options`:
 
 ```js
-xsh.exec({cwd: "/tmp"}, "pwd").promise.then(r => { console.log("result", r.stdout)})
+xsh.exec({cwd: "/tmp"}, "pwd").then(r => { console.log("result", r.stdout)})
 ```
 
 -   With callback:
@@ -97,12 +97,14 @@ xsh.exec("echo hello", (r) => {console.log("result", r.stdout)})
 
 ```js
 {
-  promise, child, stdout, stderr
+  then, catch, promise, child, stdout, stderr
 }
 ```
 
 Where:
 
+-   `then` - a wrapper function for calling the `promise.then`
+-   `catch` - a wrapper function for calling the `promise.catch`
 -   `promise` - rejects with the error or resolves with `{ stdout, stderr }`
 -   `child` - the child from `exec`
 -   `stdout` and `stderr` - alias to `child.stdout` and `child.stderr`

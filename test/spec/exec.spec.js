@@ -129,8 +129,21 @@ describe("exec", function() {
 
     r.stdout.on("data", onData);
 
-    return r.promise.then(output => {
+    return r.then(output => {
       expect(data).to.deep.equal(["1\n", "2\n"]);
     });
+  });
+
+  it("should provide catch for error", () => {
+    let error;
+    return xsh
+      .exec(true, "blahblahblah")
+      .catch(err => {
+        error = err;
+      })
+      .then(() => {
+        expect(error).to.exist;
+        expect(error.output.stderr).includes("not found");
+      });
   });
 });
