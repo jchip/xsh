@@ -84,13 +84,22 @@ describe("exec", function() {
       "text",
       function(err, output) {
         expect(err).to.be.not.ok;
-        expect(output.stdout).to.equal("hello, world my name is test foo bar more text\n");
+        expect(output.stdout.trim()).to.equal("hello, world my name is test foo bar more text");
         done();
       }
     );
   });
 
   it("should exec with user env", function(done) {
+    let cmd;
+    let expected;
+    if (process.platform === "win32") {
+      cmd = "echo FOO=%FOO% hello=%hello%";
+      expected = "FOO=%FOO% hello=test";
+    } else {
+      cmd = "echo FOO=$FOO hello=$hello";
+      expected = "FOO= hello=test";
+    }
     process.env.FOO = "bar";
     xsh.exec(
       {
@@ -99,10 +108,10 @@ describe("exec", function() {
           PATH: process.env.PATH
         }
       },
-      "echo FOO=$FOO hello=$hello",
+      cmd,
       function(err, output) {
         expect(err).to.be.not.ok;
-        expect(output.stdout).includes("FOO= hello=test");
+        expect(output.stdout.trim()).includes(expected);
         delete process.env.FOO;
         done();
       }
@@ -115,9 +124,9 @@ describe("exec", function() {
 
   it("should emit stdout data before complete @callback", done => {
     let data = [];
-    const onData = x => data.push(x);
+    const onData = x => data.push(x.trim());
     const r = xsh.exec(true, "echo 1 && sleep 1 && echo 2", (err, output) => {
-      expect(data).to.deep.equal(["1\n", "2\n"]);
+      expect(data).to.deep.equal(["1", "2"]);
       done();
     });
     r.stdout.on("data", onData);
@@ -125,13 +134,13 @@ describe("exec", function() {
 
   it("should emit stdout data before complete @Promise", () => {
     let data = [];
-    const onData = x => data.push(x);
+    const onData = x => data.push(x.trim());
     const r = xsh.exec(true, "echo 1 && sleep 1 && echo 2");
 
     r.stdout.on("data", onData);
 
     return r.then(output => {
-      expect(data).to.deep.equal(["1\n", "2\n"]);
+      expect(data).to.deep.equal(["1", "2"]);
     });
   });
 
@@ -144,19 +153,23 @@ describe("exec", function() {
       })
       .then(() => {
         expect(error).to.exist;
-        expect(error.output.stderr).includes("not found");
+        expect(error.output.stderr).includes(
+          process.platform === "win32" ? "not recognized" : "not found"
+        );
       });
   });
 
   it("should have its returned value be treated as a promise by bluebird", () => {
     return Promise.resolve("hello").then(() => xsh.exec("echo blah")).then(r => {
-      expect(r).to.deep.equal({ stdout: "blah\n", stderr: "" });
+      expect(r.stdout.trim()).to.equal("blah");
+      expect(r.stderr).to.equal("");
     });
   });
 
   it("should have its returned value be treated as a promise by global.Promise", () => {
     return global.Promise.resolve("hello").then(() => xsh.exec("echo blah")).then(r => {
-      expect(r).to.deep.equal({ stdout: "blah\n", stderr: "" });
+      expect(r.stdout.trim()).to.equal("blah");
+      expect(r.stderr).to.equal("");
     });
   });
 });
