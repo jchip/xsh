@@ -1,6 +1,6 @@
 {
   "name": "xsh",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Some random NodeJS helper functions for shell execution",
   "main": "lib/index.js",
   "scripts": {
