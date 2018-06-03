@@ -8,6 +8,9 @@
     "format": "prettier --write --print-width 100 lib/*.js",
     "coverage": "nyc --all --reporter=lcov --reporter=text --reporter=text-summary npm test"
   },
+  "files": [
+    "lib"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/jchip/xsh.git"
