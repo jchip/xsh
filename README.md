@@ -47,40 +47,21 @@ Both return the string `"echo hello"`.
 ### [exec](#exec)
 
 ```js
-xsh.exec( [options], shellCommand, [callback] );
+xsh.exec(shellCommand, [options], [callback] );
 ```
 
 Use [shelljs `exec`] to execute `shellCommand` in `async` mode.
 
-Example:
-
--   With Promise:
-
-```js
-xsh.exec("echo hello").then(r => { console.log("result", r.stdout); });
-```
-
--   With `options`:
-
-```js
-xsh.exec({cwd: "/tmp"}, "pwd").then(r => { console.log("result", r.stdout)})
-```
-
--   With callback:
-
-```js
-xsh.exec("echo hello", (r) => {console.log("result", r.stdout)})
-```
-
 #### Arguments
+
+-   `shellCommand` - can be combination of multiple strings and arrays.  Array is joined with `" "` into strings.  All final strings are joined with `" "`.
 
 -   `options` - optional `options`
 
-    -   If it's either `true` or `false`, it turns on/off output to console.
+    -   If it's either `true` or `false`, it sets `silent` flag for output to console.
     -   It can also be an object that's passed to [NodeJS exec](https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback).
         -   For example, it can be `{silent: true}`
-
--   `shellCommand` - can be combination of multiple strings and arrays.  Array is joined with `" "` into strings.  All final strings are joined with `" "`.
+    -   This can be the first, last, or second to last (if last is the callback) argument.
 
 -   `callback` - optional, if provided, it will be called as follows:
 
@@ -108,6 +89,34 @@ Where:
 -   `promise` - rejects with the error or resolves with `{ stdout, stderr }`
 -   `child` - the child from `exec`
 -   `stdout` and `stderr` - alias to `child.stdout` and `child.stderr`
+
+#### exec Examples
+
+-   With Promise:
+
+```js
+xsh.exec("echo hello").then(r => { console.log("result", r.stdout); });
+```
+
+-   With `options`:
+
+```js
+xsh.exec("pwd", {cwd: "/tmp"}).then(r => { console.log("result", r.stdout)})
+```
+
+-   With callback:
+
+```js
+xsh.exec("echo hello", (r) => {console.log("result", r.stdout)})
+```
+
+-   `shellCommand` as a combination of strings and array of strings:
+
+```js
+xsh.exec("echo", ["hello", "world"], {silent: false})
+```
+
+Would run shell command: `echo hello world`
 
 ### [envPath.addToFront](#envpathaddtofront)
 

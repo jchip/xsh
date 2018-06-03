@@ -118,8 +118,16 @@ describe("exec", function() {
     );
   });
 
-  it("should failed if a command fragment is not array or string", function() {
-    expect(() => xsh.exec("test", ["1", "2"], true)).to.throw(Error);
+  it("should fail if a command fragment is not array or string", function() {
+    expect(() => xsh.exec("test", ["1", "2"], 1)).to.throw(
+      "command fragment must be an array or string"
+    );
+  });
+
+  it("should fail if options is not last or 2nd to last argument", () => {
+    expect(() => xsh.exec("test", ["a"], true, "b", () => true)).to.throw(
+      "options must be the first, last, or second to last argument"
+    );
   });
 
   it("should emit stdout data before complete @callback", done => {
