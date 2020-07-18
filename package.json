@@ -20,13 +20,16 @@
   "author": "Joel Chen <joel123@gmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "shcmd": "^0.7.9"
+    "shcmd": "^0.8.4"
   },
   "devDependencies": {
     "bluebird": "^3.5.1",
     "chai": "^4.0.2",
     "mocha": "^3.4.2",
     "nyc": "^11.0.2",
-    "prettier": "^1.4.4"
+    "prettier": "^1.19.1"
+  },
+  "prettier": {
+    "printWidth": 100
   }
 }
