@@ -52,6 +52,67 @@ describe("envPath", function() {
     expect(PATH.indexOf("/test1")).to.equal(0);
   });
 
+  it("addToFront should remove duplicates from anywhere in PATH", function() {
+    const p1 = "/path1";
+    const p2 = "/path2";
+    const p3 = "/path3";
+    const p4 = "/path4";
+
+    // Test: duplicate in middle of PATH
+    let PATH = [p1, p2, p3].join(Path.delimiter);
+    PATH = xsh.envPath.addToFront(p2, PATH);
+    expect(PATH).to.equal([p2, p1, p3].join(Path.delimiter));
+    expect(PATH.split(Path.delimiter).filter(x => x === p2).length).to.equal(1);
+
+    // Test: duplicate at end of PATH
+    PATH = [p1, p2, p3].join(Path.delimiter);
+    PATH = xsh.envPath.addToFront(p3, PATH);
+    expect(PATH).to.equal([p3, p1, p2].join(Path.delimiter));
+    expect(PATH.split(Path.delimiter).filter(x => x === p3).length).to.equal(1);
+
+    // Test: already at front - should not create duplicates
+    PATH = [p1, p2, p3].join(Path.delimiter);
+    PATH = xsh.envPath.addToFront(p1, PATH);
+    expect(PATH).to.equal([p1, p2, p3].join(Path.delimiter));
+    expect(PATH.split(Path.delimiter).filter(x => x === p1).length).to.equal(1);
+
+    // Test: multiple duplicates
+    PATH = [p1, p2, p1, p3, p1].join(Path.delimiter);
+    PATH = xsh.envPath.addToFront(p1, PATH);
+    expect(PATH).to.equal([p1, p2, p3].join(Path.delimiter));
+    expect(PATH.split(Path.delimiter).filter(x => x === p1).length).to.equal(1);
+
+    // Test: adding new path to complex PATH
+    PATH = [p1, p2, p3].join(Path.delimiter);
+    PATH = xsh.envPath.addToFront(p4, PATH);
+    expect(PATH).to.equal([p4, p1, p2, p3].join(Path.delimiter));
+  });
+
+  it("addToFront should handle empty string and non-string inputs", function() {
+    const p1 = "/path1";
+    const p2 = "/path2";
+
+    // Test: empty string should not modify PATH
+    let PATH = [p1, p2].join(Path.delimiter);
+    PATH = xsh.envPath.addToFront("", PATH);
+    expect(PATH).to.equal([p1, p2].join(Path.delimiter));
+
+    // Test: non-string (null) should not modify PATH
+    PATH = [p1, p2].join(Path.delimiter);
+    PATH = xsh.envPath.addToFront(null, PATH);
+    expect(PATH).to.equal([p1, p2].join(Path.delimiter));
+
+    // Test: non-string (number) should not modify PATH
+    PATH = [p1, p2].join(Path.delimiter);
+    PATH = xsh.envPath.addToFront(123, PATH);
+    expect(PATH).to.equal([p1, p2].join(Path.delimiter));
+
+    // Test: undefined should not modify PATH
+    PATH = [p1, p2].join(Path.delimiter);
+    PATH = xsh.envPath.addToFront(undefined, PATH);
+    expect(PATH).to.equal([p1, p2].join(Path.delimiter));
+  });
+
   it("addToEnd should add path to end", function() {
     process.env[pathKey] = "";
     xsh.envPath.addToEnd("/test1");
